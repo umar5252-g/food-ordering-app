@@ -1,186 +1,170 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
+import { Link, useSearchParams } from "react-router-dom";
+import { Search, ChevronRight } from "lucide-react";
 import api from "../api/axios";
+import ProductCard from "../components/ProductCard";
 
 const Menu = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const { addToCart, getCartItemCount } = useCart();
-  const { user, logout } = useAuth();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || "all",
+  );
 
   const categories = [
-    "all",
-    "burgers",
-    "pizza",
-    "pasta",
-    "salads",
-    "drinks",
-    "desserts",
+    { id: "all", label: "All" },
+    { id: "burgers", label: "Burgers" },
+    { id: "chicken", label: "Chicken" },
+    { id: "pizza", label: "Pizza" },
+    { id: "pasta", label: "Pasta" },
+    { id: "salads", label: "Salads" },
+    { id: "sides", label: "Sides" },
+    { id: "drinks", label: "Drinks" },
+    { id: "desserts", label: "Desserts" },
   ];
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    if (selectedCategory !== "all") {
+      setSearchParams({ category: selectedCategory });
+    } else {
+      setSearchParams({});
+    }
+  }, [selectedCategory, setSearchParams]);
+
   const fetchProducts = async () => {
     try {
+      setLoading(true);
       const response = await api.get("/products");
       setProducts(response.data.data);
-    } catch (error) {
+    } catch (err) {
       setError("Failed to load products");
-      console.error("Error fetching products:", error);
+      console.error("Error fetching products:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredProducts =
-    selectedCategory === "all"
-      ? products
-      : products.filter((product) => product.category === selectedCategory);
+  const filteredProducts = products.filter((product) => {
+    const matchesCategory =
+      selectedCategory === "all" || product.category === selectedCategory;
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
-  const handleAddToCart = (product) => {
-    addToCart(product);
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategory(categoryId);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-white text-xl">Loading menu...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-400 text-xl mb-4">{error}</div>
-          <button
-            onClick={fetchProducts}
-            className="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2 rounded-lg"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const LoadingSkeleton = () => (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {[...Array(12)].map((_, i) => (
+        <div key={i} className="h-80 animate-pulse rounded-2xl bg-gray-200" />
+      ))}
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      {/* Header */}
-      <header className="bg-gray-900 border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="text-2xl font-bold text-white">
-              Flavor <span className="text-brand-600">Point</span>
+    <div className="min-h-screen bg-white">
+      {/* Page Header Banner */}
+      <section className="bg-gradient-to-r from-[#E4002B] to-red-700 px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-4 flex items-center gap-2 text-red-100">
+            <Link to="/" className="hover:text-white transition">
+              Home
             </Link>
-
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/cart"
-                className="relative bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-              >
-                Cart ({getCartItemCount()})
-              </Link>
-
-              {user && (
-                <div className="flex items-center space-x-4">
-                  <span className="text-gray-300">Hi, {user.name}</span>
-                  <Link
-                    to="/profile"
-                    className="text-gray-300 hover:text-white"
-                  >
-                    Profile
-                  </Link>
-                  <button
-                    onClick={logout}
-                    className="text-gray-300 hover:text-white"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
+            <ChevronRight className="h-4 w-4" />
+            <span>Menu</span>
           </div>
+          <h1 className="text-4xl font-black text-white md:text-5xl">
+            Our Menu
+          </h1>
+          <p className="mt-2 max-w-xl text-lg text-red-100">
+            Explore our delicious selection of fresh, quality dishes
+          </p>
         </div>
-      </header>
+      </section>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* Search Bar */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">Our Menu</h1>
-
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 capitalize ${
-                  selectedCategory === category
-                    ? "bg-brand-600 text-white"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+          <div className="relative">
+            <Search className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search dishes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-full border border-gray-300 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder-gray-500 focus:border-[#E4002B] focus:outline-none focus:ring-2 focus:ring-[#E4002B]/10"
+            />
           </div>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <div
-              key={product._id}
-              className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-gray-700 transition-colors duration-200"
+        {/* Category Filter Tabs */}
+        <div className="mb-8 flex flex-wrap gap-2 border-b border-gray-200 pb-4">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => handleCategoryChange(category.id)}
+              className={`rounded-full px-4 py-2 font-semibold transition ${
+                selectedCategory === category.id
+                  ? "bg-[#E4002B] text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
             >
-              {product.image && (
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-48 object-cover"
-                />
-              )}
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  {product.name}
-                </h3>
-                <p className="text-gray-400 text-sm mb-3 line-clamp-2">
-                  {product.description}
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="text-brand-400 font-bold text-lg">
-                    ${product.price}
-                  </span>
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    disabled={!product.isAvailable}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                      product.isAvailable
-                        ? "bg-brand-600 hover:bg-brand-700 text-white"
-                        : "bg-gray-700 text-gray-500 cursor-not-allowed"
-                    }`}
-                  >
-                    {product.isAvailable ? "Add to Cart" : "Unavailable"}
-                  </button>
-                </div>
-              </div>
-            </div>
+              {category.label}
+            </button>
           ))}
         </div>
 
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-400 text-lg">
-              No products found in this category.
+        {/* Error State */}
+        {error && (
+          <div className="mb-8 rounded-2xl bg-red-50 p-6 text-center">
+            <p className="text-red-700">{error}</p>
+            <button
+              onClick={fetchProducts}
+              className="mt-4 inline-flex rounded-full bg-red-600 px-6 py-2 font-semibold text-white hover:bg-red-700"
+            >
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && <LoadingSkeleton />}
+
+        {/* No Results State */}
+        {!loading && !error && filteredProducts.length === 0 && (
+          <div className="rounded-2xl bg-gray-50 py-12 text-center">
+            <p className="text-lg text-gray-600">
+              {searchTerm
+                ? `No dishes found matching "${searchTerm}"`
+                : "No products available in this category"}
             </p>
+          </div>
+        )}
+
+        {/* Products Grid */}
+        {!loading && !error && filteredProducts.length > 0 && (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
+        )}
+
+        {/* Results Count */}
+        {!loading && !error && filteredProducts.length > 0 && (
+          <div className="mt-8 text-center text-sm text-gray-600">
+            Showing {filteredProducts.length} of {products.length} products
           </div>
         )}
       </main>
