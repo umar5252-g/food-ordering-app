@@ -6,12 +6,16 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Menu from "./pages/Menu";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import OrderConfirmation from "./pages/OrderConfirmation";
 import Profile from "./pages/Profile";
 import ProductDetail from "./pages/ProductDetail";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
+      <Toaster position="top-right" />
       <Navbar />
       <main className="flex-1">
         <Routes>
@@ -21,6 +25,8 @@ function App() {
           <Route path="/menu" element={<Menu />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </main>
