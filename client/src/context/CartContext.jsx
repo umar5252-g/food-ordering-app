@@ -11,24 +11,18 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    try {
+      const savedCart = localStorage.getItem("cart");
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error("Error parsing cart from localStorage:", error);
+      return [];
+    }
+  });
   const [total, setTotal] = useState(0);
 
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      try {
-        const parsedCart = JSON.parse(savedCart);
-        setCart(parsedCart);
-        calculateTotal(parsedCart);
-      } catch (error) {
-        console.error("Error loading cart from localStorage:", error);
-      }
-    }
-  }, []);
-
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage and update total whenever cart changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
     calculateTotal(cart);

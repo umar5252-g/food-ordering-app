@@ -11,6 +11,7 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import Profile from "./pages/Profile";
 import ProductDetail from "./pages/ProductDetail";
 import OrderDetail from "./pages/OrderDetail";
+import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 
@@ -45,6 +46,7 @@ function App() {
             }
           />
           <Route path="/orders/:id" element={<OrderDetail />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

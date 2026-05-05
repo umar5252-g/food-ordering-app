@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, ChevronRight } from "lucide-react";
+import { Search, ChevronRight, Loader2 } from "lucide-react";
 import api from "../api/axios";
 import ProductCard from "../components/ProductCard";
 
@@ -65,10 +65,8 @@ const Menu = () => {
   };
 
   const LoadingSkeleton = () => (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {[...Array(12)].map((_, i) => (
-        <div key={i} className="h-80 animate-pulse rounded-2xl bg-gray-200" />
-      ))}
+    <div className="flex h-64 items-center justify-center">
+      <Loader2 className="h-12 w-12 animate-spin text-[#E4002B]" />
     </div>
   );
 

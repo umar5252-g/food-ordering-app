@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ChevronRight, Zap, Clock, DollarSign } from "lucide-react";
+import { ChevronRight, Zap, Clock, DollarSign, Loader2 } from "lucide-react";
 import api from "../api/axios";
 import ProductCard from "../components/ProductCard";
 
@@ -126,13 +126,8 @@ const Home = () => {
           </div>
 
           {loading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-64 animate-pulse rounded-2xl bg-gray-200"
-                />
-              ))}
+            <div className="flex h-64 items-center justify-center">
+              <Loader2 className="h-12 w-12 animate-spin text-[#E4002B]" />
             </div>
           ) : error ? (
             <div className="rounded-2xl bg-red-50 p-6 text-center text-red-700">
