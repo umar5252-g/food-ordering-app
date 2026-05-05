@@ -52,30 +52,9 @@ const Profile = () => {
           const res = await api.get("/orders/my-orders");
           setOrders(res.data?.data || res.data || []);
         } catch (err) {
-          console.warn("My Orders fetch failed:", err);
-          // Fallback just for visual demonstration if backend isn't ready
-          setOrders([
-            {
-              _id: "ORD-98765432",
-              createdAt: new Date().toISOString(),
-              totalPrice: 2500,
-              status: "Out for Delivery",
-              items: [
-                { name: "Double Cheese Burger", quantity: 2 },
-                { name: "Large Fries", quantity: 1 }
-              ]
-            },
-            {
-              _id: "ORD-12345678",
-              createdAt: new Date(Date.now() - 86400000 * 3).toISOString(), // 3 days ago
-              totalPrice: 1550,
-              status: "Delivered",
-              items: [
-                { name: "Spicy Chicken Wrap", quantity: 1 },
-                { name: "Coke", quantity: 2 }
-              ]
-            }
-          ]);
+          console.error("My Orders fetch failed:", err);
+          toast.error("Failed to load your orders.");
+          setOrders([]);
         } finally {
           setLoadingOrders(false);
         }
