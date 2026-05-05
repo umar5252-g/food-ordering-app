@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -14,11 +15,29 @@ const Login = () => {
   // Determine where to redirect after login (default to home)
   const from = location.state?.from || "/";
 
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.email || !formData.password) {
-      return toast.error("Please fill in all fields.");
+    if (!validate()) {
+      return toast.error("Please fix the errors in the form.");
     }
 
     setLoading(true);
@@ -40,6 +59,10 @@ const Login = () => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+    // Clear error for field when user types
+    if (errors[e.target.name]) {
+      setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+    }
   };
 
   return (
@@ -73,9 +96,10 @@ const Login = () => {
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="block w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                className={`block w-full rounded-xl border ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1`}
                 placeholder="you@example.com"
               />
+              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
             </div>
 
             <div>
@@ -88,9 +112,10 @@ const Login = () => {
                 type="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="block w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                className={`block w-full rounded-xl border ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1`}
                 placeholder="••••••••"
               />
+              {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
             </div>
 
             <button

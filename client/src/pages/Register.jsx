@@ -11,19 +11,40 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Full Name is required";
+    
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
 
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-      return toast.error("Please fill in all fields.");
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
     }
 
     if (formData.password !== formData.confirmPassword) {
-      return toast.error("Passwords do not match.");
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validate()) {
+      return toast.error("Please fix the errors in the form.");
     }
 
     setLoading(true);
@@ -32,7 +53,6 @@ const Register = () => {
 
     if (result.success) {
       toast.success("Account created successfully!");
-      // The context's register method auto-logs the user in, so we just redirect to home
       navigate("/", { replace: true });
     } else {
       toast.error(result.message || "Failed to register.");
@@ -46,6 +66,9 @@ const Register = () => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+    if (errors[e.target.name]) {
+      setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+    }
   };
 
   return (
@@ -79,9 +102,10 @@ const Register = () => {
                 type="text"
                 value={formData.name}
                 onChange={handleChange}
-                className="block w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                className={`block w-full rounded-xl border ${errors.name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1`}
                 placeholder="John Doe"
               />
+              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
             </div>
 
             <div>
@@ -94,9 +118,10 @@ const Register = () => {
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="block w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                className={`block w-full rounded-xl border ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1`}
                 placeholder="you@example.com"
               />
+              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
             </div>
 
             <div>
@@ -109,9 +134,10 @@ const Register = () => {
                 type="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="block w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                className={`block w-full rounded-xl border ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1`}
                 placeholder="••••••••"
               />
+              {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
             </div>
 
             <div>
@@ -124,9 +150,10 @@ const Register = () => {
                 type="password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="block w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                className={`block w-full rounded-xl border ${errors.confirmPassword ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1`}
                 placeholder="••••••••"
               />
+              {errors.confirmPassword && <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>}
             </div>
 
             <button

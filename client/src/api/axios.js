@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
@@ -21,12 +22,25 @@ api.interceptors.request.use(
   },
 );
 
-// Response interceptor to handle token refresh
+// Response interceptor to handle token refresh and errors
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    // Network Error
+    if (!error.response && error.message === "Network Error") {
+      toast.error("Check your internet connection");
+      return Promise.reject(error);
+    }
+
+    // 500 Internal Server Error
+    if (error.response?.status >= 500) {
+      toast.error("Something went wrong, try again");
+      return Promise.reject(error);
+    }
+
     const originalRequest = error.config;
 
+    // 401 Unauthorized handling with token refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -48,14 +62,24 @@ api.interceptors.response.use(
 
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           return api(originalRequest);
+        } else {
+          // No refresh token, force logout
+          localStorage.clear();
+          window.location.href = "/login";
+          return Promise.reject(error);
         }
       } catch (refreshError) {
-        // Refresh failed, redirect to login
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        // Refresh failed, force logout
+        localStorage.clear();
         window.location.href = "/login";
         return Promise.reject(refreshError);
       }
+    }
+
+    // Catch any secondary 401s (e.g. if the original request was retried and still failed)
+    if (error.response?.status === 401) {
+      localStorage.clear();
+      window.location.href = "/login";
     }
 
     return Promise.reject(error);

@@ -22,6 +22,7 @@ const Checkout = () => {
   }, [isAuthenticated, authLoading, navigate, cart.length]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     fullName: user?.name || "",
@@ -38,26 +39,45 @@ const Checkout = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const deliveryFee = formData.orderType === "Delivery" ? 150 : 0;
   const discount = 0; // Assume 0 unless fetched from somewhere else
   const finalTotal = total + deliveryFee - discount;
 
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.fullName.trim()) newErrors.fullName = "Full Name is required";
+    
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (!/^\d{11}$/.test(formData.phone.replace(/[\s-]/g, ''))) {
+      newErrors.phone = "Phone must be 11 digits";
+    }
+
+    if (formData.orderType === "Delivery") {
+      if (!formData.address.trim()) newErrors.address = "Address is required";
+      if (!formData.city.trim()) newErrors.city = "City is required";
+    }
+
+    if (formData.paymentMethod === "Card") {
+      if (!formData.cardNumber.trim()) newErrors.cardNumber = "Card number is required";
+      if (!formData.expiry.trim()) newErrors.expiry = "Expiry date is required";
+      if (!formData.cvv.trim()) newErrors.cvv = "CVV is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic Validations
-    if (!formData.fullName.trim() || !formData.phone.trim()) {
-      return toast.error("Please provide your name and phone number.");
-    }
-    if (formData.orderType === "Delivery" && (!formData.address.trim() || !formData.city.trim())) {
-      return toast.error("Please provide complete delivery address.");
-    }
-    if (formData.paymentMethod === "Card") {
-      if (!formData.cardNumber || !formData.expiry || !formData.cvv) {
-        return toast.error("Please fill in all card details.");
-      }
+    if (!validate()) {
+      return toast.error("Please fix the errors in the form.");
     }
 
     setIsSubmitting(true);
@@ -155,9 +175,10 @@ const Checkout = () => {
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                  className={`w-full rounded-xl border ${errors.fullName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
                   placeholder="John Doe"
                 />
+                {errors.fullName && <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>}
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700">Phone Number</label>
@@ -166,9 +187,10 @@ const Checkout = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
-                  placeholder="+92 300 1234567"
+                  className={`w-full rounded-xl border ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
+                  placeholder="03001234567"
                 />
+                {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
               </div>
 
               {formData.orderType === "Delivery" && (
@@ -180,9 +202,10 @@ const Checkout = () => {
                       value={formData.address}
                       onChange={handleChange}
                       rows="2"
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                      className={`w-full rounded-xl border ${errors.address ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
                       placeholder="Street 123, House 45, Area"
                     ></textarea>
+                    {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
                   </div>
                   <div>
                     <label className="mb-2 block text-sm font-medium text-gray-700">City</label>
@@ -191,9 +214,10 @@ const Checkout = () => {
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                      className={`w-full rounded-xl border ${errors.city ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
                       placeholder="Lahore"
                     />
+                    {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
                   </div>
                 </>
               )}
@@ -269,8 +293,9 @@ const Checkout = () => {
                       value={formData.cardNumber}
                       onChange={handleChange}
                       placeholder="0000 0000 0000 0000"
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                      className={`w-full rounded-xl border ${errors.cardNumber ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
                     />
+                    {errors.cardNumber && <p className="mt-1 text-sm text-red-500">{errors.cardNumber}</p>}
                   </div>
                   <div>
                     <label className="mb-2 block text-sm font-medium text-gray-700">Expiry (MM/YY)</label>
@@ -280,8 +305,9 @@ const Checkout = () => {
                       value={formData.expiry}
                       onChange={handleChange}
                       placeholder="MM/YY"
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                      className={`w-full rounded-xl border ${errors.expiry ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
                     />
+                    {errors.expiry && <p className="mt-1 text-sm text-red-500">{errors.expiry}</p>}
                   </div>
                   <div>
                     <label className="mb-2 block text-sm font-medium text-gray-700">CVV</label>
@@ -291,8 +317,9 @@ const Checkout = () => {
                       value={formData.cvv}
                       onChange={handleChange}
                       placeholder="123"
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-[#E4002B] focus:outline-none focus:ring-1 focus:ring-[#E4002B]"
+                      className={`w-full rounded-xl border ${errors.cvv ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
                     />
+                    {errors.cvv && <p className="mt-1 text-sm text-red-500">{errors.cvv}</p>}
                   </div>
                 </div>
               )}
