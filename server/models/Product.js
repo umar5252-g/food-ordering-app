@@ -26,6 +26,7 @@ const productSchema = new mongoose.Schema(
       enum: {
         values: [
           "burgers",
+          "chicken",
           "pizza",
           "pasta",
           "salads",
