@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ChevronRight, Zap, Clock, DollarSign, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 import api from "../api/axios";
 import ProductCard from "../components/ProductCard";
 
@@ -8,23 +9,24 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
   const fetchProducts = async () => {
     try {
       const response = await api.get("/products");
       setProducts(response.data.data.slice(0, 6));
     } catch (err) {
-      setError("Failed to load products");
+      const message = err.response?.data?.message || "Failed to load products";
+      setError(message);
+      toast.error(message);
       console.error("Error fetching products:", err);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const categories = [
     { name: "Burgers", emoji: "🍔", id: "burgers" },
@@ -132,6 +134,15 @@ const Home = () => {
           ) : error ? (
             <div className="rounded-2xl bg-red-50 p-6 text-center text-red-700">
               {error}
+            </div>
+          ) : products.length === 0 ? (
+            <div className="rounded-2xl bg-gray-50 p-12 text-center">
+              <p className="text-lg font-semibold text-gray-900">
+                No featured dishes available
+              </p>
+              <p className="mt-2 text-gray-500">
+                Check back soon for our latest menu items.
+              </p>
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

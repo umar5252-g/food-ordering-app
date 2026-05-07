@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search, ChevronRight, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 import api from "../api/axios";
 import ProductCard from "../components/ProductCard";
 
@@ -26,6 +27,21 @@ const Menu = () => {
     { id: "desserts", label: "Desserts" },
   ];
 
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("/products");
+      setProducts(response.data.data);
+    } catch (err) {
+      const message = err.response?.data?.message || "Failed to load products";
+      setError(message);
+      toast.error(message);
+      console.error("Error fetching products:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -37,19 +53,6 @@ const Menu = () => {
       setSearchParams({});
     }
   }, [selectedCategory, setSearchParams]);
-
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get("/products");
-      setProducts(response.data.data);
-    } catch (err) {
-      setError("Failed to load products");
-      console.error("Error fetching products:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory =

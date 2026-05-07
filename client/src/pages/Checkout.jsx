@@ -2,9 +2,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
-import { MapPin, CreditCard, Banknote, Smartphone, Loader2, ArrowLeft } from "lucide-react";
+import {
+  MapPin,
+  CreditCard,
+  Banknote,
+  Smartphone,
+  Loader2,
+  ArrowLeft,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+
+const placeholderImage = "https://via.placeholder.com/150?text=No+Image";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -51,10 +60,10 @@ const Checkout = () => {
   const validate = () => {
     const newErrors = {};
     if (!formData.fullName.trim()) newErrors.fullName = "Full Name is required";
-    
+
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
-    } else if (!/^\d{11}$/.test(formData.phone.replace(/[\s-]/g, ''))) {
+    } else if (!/^\d{11}$/.test(formData.phone.replace(/[\s-]/g, ""))) {
       newErrors.phone = "Phone must be 11 digits";
     }
 
@@ -64,7 +73,8 @@ const Checkout = () => {
     }
 
     if (formData.paymentMethod === "Card") {
-      if (!formData.cardNumber.trim()) newErrors.cardNumber = "Card number is required";
+      if (!formData.cardNumber.trim())
+        newErrors.cardNumber = "Card number is required";
       if (!formData.expiry.trim()) newErrors.expiry = "Expiry date is required";
       if (!formData.cvv.trim()) newErrors.cvv = "CVV is required";
     }
@@ -106,7 +116,10 @@ const Checkout = () => {
       clearCart();
       navigate(`/order-confirmation/${orderId}`);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to place order. Please try again.");
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to place order. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -129,13 +142,16 @@ const Checkout = () => {
         <ArrowLeft className="h-4 w-4" /> Go Back
       </button>
 
-      <h1 className="mb-8 text-3xl font-extrabold text-gray-900 sm:text-4xl">Checkout</h1>
+      <h1 className="mb-8 text-3xl font-extrabold text-gray-900 sm:text-4xl">
+        Checkout
+      </h1>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
-        
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12"
+      >
         {/* LEFT SIDE: Delivery Details & Payment Form */}
         <div className="lg:col-span-2 space-y-8">
-          
           {/* Order Details Section */}
           <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="mb-6 flex items-center gap-2 text-xl font-bold text-gray-900">
@@ -145,7 +161,9 @@ const Checkout = () => {
             <div className="mb-6 grid grid-cols-2 gap-4">
               <button
                 type="button"
-                onClick={() => setFormData((prev) => ({ ...prev, orderType: "Delivery" }))}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, orderType: "Delivery" }))
+                }
                 className={`rounded-xl border p-4 text-center font-bold transition ${
                   formData.orderType === "Delivery"
                     ? "border-[#E4002B] bg-red-50 text-[#E4002B]"
@@ -156,7 +174,9 @@ const Checkout = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setFormData((prev) => ({ ...prev, orderType: "Pickup" }))}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, orderType: "Pickup" }))
+                }
                 className={`rounded-xl border p-4 text-center font-bold transition ${
                   formData.orderType === "Pickup"
                     ? "border-[#E4002B] bg-red-50 text-[#E4002B]"
@@ -169,55 +189,73 @@ const Checkout = () => {
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Full Name</label>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className={`w-full rounded-xl border ${errors.fullName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
+                  className={`w-full rounded-xl border ${errors.fullName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]"} px-4 py-3 focus:outline-none focus:ring-1`}
                   placeholder="John Doe"
                 />
-                {errors.fullName && <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>}
+                {errors.fullName && (
+                  <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>
+                )}
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Phone Number</label>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Phone Number
+                </label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className={`w-full rounded-xl border ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
+                  className={`w-full rounded-xl border ${errors.phone ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]"} px-4 py-3 focus:outline-none focus:ring-1`}
                   placeholder="03001234567"
                 />
-                {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
+                {errors.phone && (
+                  <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
+                )}
               </div>
 
               {formData.orderType === "Delivery" && (
                 <>
                   <div className="sm:col-span-2">
-                    <label className="mb-2 block text-sm font-medium text-gray-700">Full Address</label>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      Full Address
+                    </label>
                     <textarea
                       name="address"
                       value={formData.address}
                       onChange={handleChange}
                       rows="2"
-                      className={`w-full rounded-xl border ${errors.address ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
+                      className={`w-full rounded-xl border ${errors.address ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]"} px-4 py-3 focus:outline-none focus:ring-1`}
                       placeholder="Street 123, House 45, Area"
                     ></textarea>
-                    {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
+                    {errors.address && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.address}
+                      </p>
+                    )}
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">City</label>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      City
+                    </label>
                     <input
                       type="text"
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
-                      className={`w-full rounded-xl border ${errors.city ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
+                      className={`w-full rounded-xl border ${errors.city ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]"} px-4 py-3 focus:outline-none focus:ring-1`}
                       placeholder="Lahore"
                     />
-                    {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
+                    {errors.city && (
+                      <p className="mt-1 text-sm text-red-500">{errors.city}</p>
+                    )}
                   </div>
                 </>
               )}
@@ -231,12 +269,20 @@ const Checkout = () => {
             </h2>
 
             <div className="space-y-4">
-              <label className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition ${
-                formData.paymentMethod === "Cash on Delivery" ? "border-[#E4002B] bg-red-50" : "border-gray-200 hover:bg-gray-50"
-              }`}>
+              <label
+                className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition ${
+                  formData.paymentMethod === "Cash on Delivery"
+                    ? "border-[#E4002B] bg-red-50"
+                    : "border-gray-200 hover:bg-gray-50"
+                }`}
+              >
                 <div className="flex items-center gap-3">
-                  <Banknote className={`h-6 w-6 ${formData.paymentMethod === "Cash on Delivery" ? "text-[#E4002B]" : "text-gray-500"}`} />
-                  <span className="font-semibold text-gray-900">Cash on Delivery</span>
+                  <Banknote
+                    className={`h-6 w-6 ${formData.paymentMethod === "Cash on Delivery" ? "text-[#E4002B]" : "text-gray-500"}`}
+                  />
+                  <span className="font-semibold text-gray-900">
+                    Cash on Delivery
+                  </span>
                 </div>
                 <input
                   type="radio"
@@ -248,11 +294,17 @@ const Checkout = () => {
                 />
               </label>
 
-              <label className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition ${
-                formData.paymentMethod === "JazzCash" ? "border-[#E4002B] bg-red-50" : "border-gray-200 hover:bg-gray-50"
-              }`}>
+              <label
+                className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition ${
+                  formData.paymentMethod === "JazzCash"
+                    ? "border-[#E4002B] bg-red-50"
+                    : "border-gray-200 hover:bg-gray-50"
+                }`}
+              >
                 <div className="flex items-center gap-3">
-                  <Smartphone className={`h-6 w-6 ${formData.paymentMethod === "JazzCash" ? "text-[#E4002B]" : "text-gray-500"}`} />
+                  <Smartphone
+                    className={`h-6 w-6 ${formData.paymentMethod === "JazzCash" ? "text-[#E4002B]" : "text-gray-500"}`}
+                  />
                   <span className="font-semibold text-gray-900">JazzCash</span>
                 </div>
                 <input
@@ -265,12 +317,20 @@ const Checkout = () => {
                 />
               </label>
 
-              <label className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition ${
-                formData.paymentMethod === "Card" ? "border-[#E4002B] bg-red-50" : "border-gray-200 hover:bg-gray-50"
-              }`}>
+              <label
+                className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition ${
+                  formData.paymentMethod === "Card"
+                    ? "border-[#E4002B] bg-red-50"
+                    : "border-gray-200 hover:bg-gray-50"
+                }`}
+              >
                 <div className="flex items-center gap-3">
-                  <CreditCard className={`h-6 w-6 ${formData.paymentMethod === "Card" ? "text-[#E4002B]" : "text-gray-500"}`} />
-                  <span className="font-semibold text-gray-900">Credit / Debit Card</span>
+                  <CreditCard
+                    className={`h-6 w-6 ${formData.paymentMethod === "Card" ? "text-[#E4002B]" : "text-gray-500"}`}
+                  />
+                  <span className="font-semibold text-gray-900">
+                    Credit / Debit Card
+                  </span>
                 </div>
                 <input
                   type="radio"
@@ -286,40 +346,56 @@ const Checkout = () => {
               {formData.paymentMethod === "Card" && (
                 <div className="mt-4 grid grid-cols-2 gap-4 rounded-xl bg-gray-50 p-4 border border-gray-200 animate-in fade-in slide-in-from-top-2">
                   <div className="col-span-2">
-                    <label className="mb-2 block text-sm font-medium text-gray-700">Card Number</label>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      Card Number
+                    </label>
                     <input
                       type="text"
                       name="cardNumber"
                       value={formData.cardNumber}
                       onChange={handleChange}
                       placeholder="0000 0000 0000 0000"
-                      className={`w-full rounded-xl border ${errors.cardNumber ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
+                      className={`w-full rounded-xl border ${errors.cardNumber ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]"} px-4 py-3 focus:outline-none focus:ring-1`}
                     />
-                    {errors.cardNumber && <p className="mt-1 text-sm text-red-500">{errors.cardNumber}</p>}
+                    {errors.cardNumber && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.cardNumber}
+                      </p>
+                    )}
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">Expiry (MM/YY)</label>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      Expiry (MM/YY)
+                    </label>
                     <input
                       type="text"
                       name="expiry"
                       value={formData.expiry}
                       onChange={handleChange}
                       placeholder="MM/YY"
-                      className={`w-full rounded-xl border ${errors.expiry ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
+                      className={`w-full rounded-xl border ${errors.expiry ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]"} px-4 py-3 focus:outline-none focus:ring-1`}
                     />
-                    {errors.expiry && <p className="mt-1 text-sm text-red-500">{errors.expiry}</p>}
+                    {errors.expiry && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.expiry}
+                      </p>
+                    )}
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">CVV</label>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      CVV
+                    </label>
                     <input
                       type="text"
                       name="cvv"
                       value={formData.cvv}
                       onChange={handleChange}
                       placeholder="123"
-                      className={`w-full rounded-xl border ${errors.cvv ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]'} px-4 py-3 focus:outline-none focus:ring-1`}
+                      className={`w-full rounded-xl border ${errors.cvv ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-[#E4002B] focus:ring-[#E4002B]"} px-4 py-3 focus:outline-none focus:ring-1`}
                     />
-                    {errors.cvv && <p className="mt-1 text-sm text-red-500">{errors.cvv}</p>}
+                    {errors.cvv && (
+                      <p className="mt-1 text-sm text-red-500">{errors.cvv}</p>
+                    )}
                   </div>
                 </div>
               )}
@@ -330,7 +406,9 @@ const Checkout = () => {
         {/* RIGHT SIDE: Order Summary */}
         <div className="lg:col-span-1">
           <div className="sticky top-24 rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
-            <h2 className="mb-6 text-xl font-bold text-gray-900">Order Summary</h2>
+            <h2 className="mb-6 text-xl font-bold text-gray-900">
+              Order Summary
+            </h2>
 
             {/* Cart Items Summary */}
             <div className="mb-6 max-h-64 overflow-y-auto space-y-4 pr-2 border-b border-gray-200 pb-6">
@@ -338,14 +416,22 @@ const Checkout = () => {
                 <div key={item._id} className="flex gap-4">
                   <div className="h-16 w-16 shrink-0 rounded-lg bg-white p-1 border border-gray-200">
                     <img
-                      src={item.image || "https://via.placeholder.com/150"}
+                      src={item.image || placeholderImage}
                       alt={item.name}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = placeholderImage;
+                      }}
                       className="h-full w-full rounded object-cover"
                     />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-sm font-bold text-gray-900 line-clamp-1">{item.name}</h4>
-                    <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                    <h4 className="text-sm font-bold text-gray-900 line-clamp-1">
+                      {item.name}
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      Qty: {item.quantity}
+                    </p>
                     <p className="mt-1 text-sm font-semibold text-[#E4002B]">
                       Rs. {(item.price * item.quantity).toFixed(2)}
                     </p>
@@ -358,16 +444,22 @@ const Checkout = () => {
             <div className="space-y-3 text-sm text-gray-600">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span className="font-semibold text-gray-900">Rs. {total.toFixed(2)}</span>
+                <span className="font-semibold text-gray-900">
+                  Rs. {total.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Delivery Fee</span>
-                <span className="font-semibold text-gray-900">Rs. {deliveryFee.toFixed(2)}</span>
+                <span className="font-semibold text-gray-900">
+                  Rs. {deliveryFee.toFixed(2)}
+                </span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span>Discount</span>
-                  <span className="font-semibold">- Rs. {discount.toFixed(2)}</span>
+                  <span className="font-semibold">
+                    - Rs. {discount.toFixed(2)}
+                  </span>
                 </div>
               )}
             </div>
@@ -392,7 +484,6 @@ const Checkout = () => {
             </button>
           </div>
         </div>
-
       </form>
     </div>
   );

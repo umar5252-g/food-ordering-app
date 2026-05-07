@@ -158,9 +158,14 @@ const logout = async (req, res) => {
   }
 };
 
+const me = (req, res) => {
+  res.json({ success: true, data: req.user });
+};
+
 module.exports = {
   register,
   login,
   refreshToken,
   logout,
+  me,
 };

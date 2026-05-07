@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import api from "../api/axios";
 
 const AuthContext = createContext();
@@ -12,7 +13,15 @@ const useAuth = () => {
 };
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem("user");
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (error) {
+      console.error("Error parsing user from localStorage:", error);
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,11 +31,15 @@ const AuthProvider = ({ children }) => {
       api
         .get("/auth/me")
         .then((response) => {
-          setUser(response.data.data.user);
+          const freshUser = response.data.data;
+          setUser(freshUser);
+          localStorage.setItem("user", JSON.stringify(freshUser));
         })
         .catch(() => {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
+          setUser(null);
         })
         .finally(() => {
           setLoading(false);
@@ -43,6 +56,7 @@ const AuthProvider = ({ children }) => {
 
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
 
       return { success: true };
@@ -82,8 +96,10 @@ const AuthProvider = ({ children }) => {
       if (refreshToken) {
         await api.post("/auth/logout", { refreshToken });
       }
+      toast.success("Logged out successfully.");
     } catch (error) {
       console.error("Logout error:", error);
+      toast.error("Logout failed. Please try again.");
     } finally {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");

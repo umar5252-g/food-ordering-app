@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 const CartContext = createContext();
 
@@ -22,12 +23,6 @@ export const CartProvider = ({ children }) => {
   });
   const [total, setTotal] = useState(0);
 
-  // Save cart to localStorage and update total whenever cart changes
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-    calculateTotal(cart);
-  }, [cart]);
-
   const calculateTotal = (cartItems) => {
     const newTotal = cartItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
@@ -35,6 +30,12 @@ export const CartProvider = ({ children }) => {
     );
     setTotal(newTotal);
   };
+
+  // Save cart to localStorage and update total whenever cart changes
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+    calculateTotal(cart);
+  }, [cart]);
 
   const addToCart = (product, quantity = 1) => {
     setCart((prevCart) => {
@@ -46,9 +47,13 @@ export const CartProvider = ({ children }) => {
             ? { ...item, quantity: item.quantity + quantity }
             : item,
         );
-      } else {
-        return [...prevCart, { ...product, quantity }];
       }
+
+      return [...prevCart, { ...product, quantity }];
+    });
+
+    toast.success(`${product.name} added to cart!`, {
+      icon: "🛒",
     });
   };
 

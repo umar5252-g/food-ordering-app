@@ -2,10 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.page-transition {
+  animation: pageFade 250ms ease-in-out;
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.button-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }

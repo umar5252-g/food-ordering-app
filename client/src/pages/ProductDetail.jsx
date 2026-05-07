@@ -2,8 +2,12 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Minus, Plus, ShoppingCart, ArrowLeft, Star } from "lucide-react";
 import api from "../api/axios";
+import toast from "react-hot-toast";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+
+const placeholderImage =
+  "https://via.placeholder.com/600x400?text=Delicious+Food";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -40,7 +44,9 @@ const ProductDetail = () => {
           setReviews([]);
         }
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load product");
+        const message = err.response?.data?.message || "Failed to load product";
+        setError(message);
+        toast.error(message);
       } finally {
         setLoading(false);
       }
@@ -128,8 +134,12 @@ const ProductDetail = () => {
         {/* Left Side: Image */}
         <div className="overflow-hidden rounded-2xl bg-white p-4 shadow-sm">
           <img
-            src={product.image || "https://via.placeholder.com/600"}
+            src={product.image || placeholderImage}
             alt={product.name}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = placeholderImage;
+            }}
             className="h-auto w-full object-cover rounded-xl"
           />
         </div>
@@ -204,17 +214,24 @@ const ProductDetail = () => {
           {/* List of reviews */}
           <div className="lg:col-span-2 space-y-6">
             {reviews.length === 0 ? (
-              <p className="text-gray-500 italic">No reviews yet. Be the first to review!</p>
+              <p className="text-gray-500 italic">
+                No reviews yet. Be the first to review!
+              </p>
             ) : (
               reviews.map((review, idx) => (
-                <div key={review._id || idx} className="rounded-xl bg-white p-6 shadow-sm">
+                <div
+                  key={review._id || idx}
+                  className="rounded-xl bg-white p-6 shadow-sm"
+                >
                   <div className="mb-4 flex items-start justify-between">
                     <div>
                       <h4 className="font-bold text-gray-900">
                         {review.user?.name || review.username || "Anonymous"}
                       </h4>
                       <span className="text-sm text-gray-500">
-                        {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : "Just now"}
+                        {review.createdAt
+                          ? new Date(review.createdAt).toLocaleDateString()
+                          : "Just now"}
                       </span>
                     </div>
                     <div className="flex">
@@ -240,7 +257,9 @@ const ProductDetail = () => {
           <div className="lg:col-span-1">
             {isAuthenticated ? (
               <div className="rounded-2xl bg-gray-100 p-6">
-                <h3 className="mb-4 text-xl font-bold text-gray-900">Write a Review</h3>
+                <h3 className="mb-4 text-xl font-bold text-gray-900">
+                  Write a Review
+                </h3>
                 {reviewError && (
                   <div className="mb-4 rounded-lg bg-red-100 p-3 text-sm text-red-700">
                     {reviewError}
@@ -256,7 +275,9 @@ const ProductDetail = () => {
                         <button
                           type="button"
                           key={star}
-                          onClick={() => setReviewForm((prev) => ({ ...prev, rating: star }))}
+                          onClick={() =>
+                            setReviewForm((prev) => ({ ...prev, rating: star }))
+                          }
                           className="focus:outline-none"
                         >
                           <Star
@@ -284,7 +305,10 @@ const ProductDetail = () => {
                       placeholder="What did you think of this item?"
                       value={reviewForm.comment}
                       onChange={(e) =>
-                        setReviewForm((prev) => ({ ...prev, comment: e.target.value }))
+                        setReviewForm((prev) => ({
+                          ...prev,
+                          comment: e.target.value,
+                        }))
                       }
                       required
                     ></textarea>
@@ -300,7 +324,9 @@ const ProductDetail = () => {
               </div>
             ) : (
               <div className="rounded-2xl bg-gray-100 p-6 text-center">
-                <h3 className="mb-2 text-lg font-bold text-gray-900">Sign in to review</h3>
+                <h3 className="mb-2 text-lg font-bold text-gray-900">
+                  Sign in to review
+                </h3>
                 <p className="mb-4 text-sm text-gray-600">
                   Share your thoughts with other customers.
                 </p>
