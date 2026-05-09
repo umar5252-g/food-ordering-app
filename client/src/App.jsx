@@ -52,7 +52,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/orders" element={<Orders />} />
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute>
+                  <Orders />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/orders/:id" element={<OrderDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

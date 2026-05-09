@@ -60,12 +60,20 @@ const Navbar = () => {
             </Link>
 
             {!isAuthenticated ? (
-              <Link
-                to="/login"
-                className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
-              >
-                Login
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/login"
+                  className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#E4002B] transition hover:bg-gray-100"
+                >
+                  Register
+                </Link>
+              </div>
             ) : (
               <div className="relative">
                 <button
@@ -149,13 +157,22 @@ const Navbar = () => {
             </Link>
 
             {!isAuthenticated ? (
-              <Link
-                to="/login"
-                className="rounded-2xl bg-white px-4 py-3 text-center text-sm font-semibold text-[#E4002B] transition hover:bg-white/90"
-                onClick={() => setMenuOpen(false)}
-              >
-                Login
-              </Link>
+              <div className="flex flex-col gap-3">
+                <Link
+                  to="/login"
+                  className="rounded-2xl bg-white px-4 py-3 text-center text-sm font-semibold text-[#E4002B] transition hover:bg-white/90"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="rounded-2xl border border-white/20 bg-transparent px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Register
+                </Link>
+              </div>
             ) : (
               <div className="rounded-2xl bg-white/10 p-4 text-sm text-white">
                 <div className="flex items-center gap-3">
