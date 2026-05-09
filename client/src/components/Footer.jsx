@@ -53,9 +53,9 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="inline-flex items-center gap-2">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#E4002B] font-bold text-white">
-                B
+                F
               </span>
-              <span className="text-lg font-bold">BrandName</span>
+              <span className="text-lg font-bold">Flavor Point</span>
             </Link>
             <p className="text-sm leading-relaxed text-gray-300">
               Your favorite meals, delivered fast. Taste the difference.
@@ -106,7 +106,7 @@ const Footer = () => {
               <p>
                 <span className="font-medium text-white">Email:</span>
                 <br />
-                info@brandname.com
+                info@flavorpoint.com
               </p>
               <p>
                 <span className="font-medium text-white">Phone:</span>
@@ -129,7 +129,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="text-center text-sm text-gray-400">
-          <p>&copy; {currentYear} BrandName. All rights reserved.</p>
+          <p>&copy; {currentYear} Flavor Point. All rights reserved.</p>
         </div>
       </div>
     </footer>

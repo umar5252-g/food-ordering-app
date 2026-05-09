@@ -16,7 +16,7 @@ router.route("/")
   .get(getOrders)
   .post(createOrder);
 
-router.get("/my-orders", getMyOrders);
+router.get("/myorders", getMyOrders);
 
 router.route("/:id")
   .get(getOrderById);

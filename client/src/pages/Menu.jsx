@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, ChevronRight, Loader2 } from "lucide-react";
+import { Search, ChevronRight, Loader2, X } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../api/axios";
 import ProductCard from "../components/ProductCard";
@@ -12,19 +12,17 @@ const Menu = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState(
-    searchParams.get("category") || "all",
+    searchParams.get("category") || "all"
   );
 
   const categories = [
     { id: "all", label: "All" },
     { id: "burgers", label: "Burgers" },
-    { id: "chicken", label: "Chicken" },
     { id: "pizza", label: "Pizza" },
-    { id: "pasta", label: "Pasta" },
-    { id: "salads", label: "Salads" },
-    { id: "sides", label: "Sides" },
+    { id: "chicken", label: "Chicken" },
     { id: "drinks", label: "Drinks" },
     { id: "desserts", label: "Desserts" },
+    { id: "sides", label: "Sides" },
   ];
 
   const fetchProducts = async () => {
@@ -67,6 +65,15 @@ const Menu = () => {
     setSelectedCategory(categoryId);
   };
 
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
+
+  const resetFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("all");
+  };
+
   const LoadingSkeleton = () => (
     <div className="flex h-64 items-center justify-center">
       <Loader2 className="h-12 w-12 animate-spin text-[#E4002B]" />
@@ -97,15 +104,24 @@ const Menu = () => {
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Search Bar */}
         <div className="mb-8">
-          <div className="relative">
+          <div className="relative max-w-xl">
             <Search className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
             <input
               type="text"
               placeholder="Search dishes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-full border border-gray-300 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder-gray-500 focus:border-[#E4002B] focus:outline-none focus:ring-2 focus:ring-[#E4002B]/10"
+              className="w-full rounded-full border border-gray-300 bg-white py-3 pl-12 pr-12 text-gray-900 placeholder-gray-500 focus:border-[#E4002B] focus:outline-none focus:ring-2 focus:ring-[#E4002B]/10 transition"
             />
+            {searchTerm && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition"
+                aria-label="Clear search"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -115,9 +131,9 @@ const Menu = () => {
             <button
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
-              className={`rounded-full px-4 py-2 font-semibold transition ${
+              className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
                 selectedCategory === category.id
-                  ? "bg-[#E4002B] text-white"
+                  ? "bg-[#E4002B] text-white shadow-md"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -129,10 +145,10 @@ const Menu = () => {
         {/* Error State */}
         {error && (
           <div className="mb-8 rounded-2xl bg-red-50 p-6 text-center">
-            <p className="text-red-700">{error}</p>
+            <p className="text-red-700 font-medium">{error}</p>
             <button
               onClick={fetchProducts}
-              className="mt-4 inline-flex rounded-full bg-red-600 px-6 py-2 font-semibold text-white hover:bg-red-700"
+              className="mt-4 inline-flex rounded-full bg-red-600 px-6 py-2 font-semibold text-white shadow hover:bg-red-700 transition"
             >
               Try Again
             </button>
@@ -144,18 +160,28 @@ const Menu = () => {
 
         {/* No Results State */}
         {!loading && !error && filteredProducts.length === 0 && (
-          <div className="rounded-2xl bg-gray-50 py-12 text-center">
-            <p className="text-lg text-gray-600">
-              {searchTerm
-                ? `No dishes found matching "${searchTerm}"`
-                : "No products available in this category"}
+          <div className="rounded-2xl bg-gray-50 py-16 text-center shadow-sm border border-gray-100">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gray-100 mb-4">
+               <Search className="h-10 w-10 text-gray-400" />
+            </div>
+            <p className="text-xl font-bold text-gray-900 mb-2">
+              No items found
             </p>
+            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+              We couldn't find any dishes matching your current filters. Try searching for something else or resetting your filters.
+            </p>
+            <button
+              onClick={resetFilters}
+              className="inline-flex rounded-full bg-[#E4002B] px-8 py-3 font-bold text-white shadow-md hover:bg-red-700 transition"
+            >
+              Reset Filters
+            </button>
           </div>
         )}
 
         {/* Products Grid */}
         {!loading && !error && filteredProducts.length > 0 && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
@@ -164,7 +190,7 @@ const Menu = () => {
 
         {/* Results Count */}
         {!loading && !error && filteredProducts.length > 0 && (
-          <div className="mt-8 text-center text-sm text-gray-600">
+          <div className="mt-12 text-center text-sm font-medium text-gray-500">
             Showing {filteredProducts.length} of {products.length} products
           </div>
         )}

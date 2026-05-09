@@ -13,6 +13,8 @@ import ProductDetail from "./pages/ProductDetail";
 import OrderDetail from "./pages/OrderDetail";
 import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 
@@ -21,7 +23,7 @@ function App() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
       <Navbar />
       <main className="flex-1">
         <div key={location.pathname} className="page-transition">
@@ -30,6 +32,8 @@ function App() {
             <Route path="/menu" element={<Menu />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route
               path="/checkout"
               element={

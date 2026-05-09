@@ -79,9 +79,9 @@ const Register = () => {
         <div className="px-8 pt-10 text-center border-b border-gray-100 pb-6">
           <Link to="/" className="inline-flex items-center justify-center gap-2 mb-4">
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E4002B] font-bold text-white text-xl shadow-md">
-              B
+              F
             </span>
-            <span className="text-2xl font-extrabold text-gray-900 tracking-tight">BrandName</span>
+            <span className="text-2xl font-extrabold text-gray-900 tracking-tight">Flavor Point</span>
           </Link>
           <h2 className="text-2xl font-bold text-gray-900">Create an Account</h2>
           <p className="mt-2 text-sm text-gray-500">

@@ -27,9 +27,9 @@ const Navbar = () => {
           className="flex items-center gap-2 text-lg font-bold tracking-tight"
         >
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#E4002B] shadow-sm">
-            B
+            F
           </span>
-          <span>BrandName</span>
+          <span>Flavor Point</span>
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
@@ -139,6 +139,24 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            {isAuthenticated && (
+              <>
+                <Link
+                  to="/orders"
+                  className="block rounded-2xl px-4 py-3 transition hover:bg-white/10"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Orders
+                </Link>
+                <Link
+                  to="/profile"
+                  className="block rounded-2xl px-4 py-3 transition hover:bg-white/10"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+              </>
+            )}
           </nav>
 
           <div className="mt-4 flex flex-col gap-3">

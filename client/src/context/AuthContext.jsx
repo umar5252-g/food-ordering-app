@@ -90,7 +90,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    window.location.href = "/";
+    toast.success("Goodbye!");
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 500);
   };
 
   const value = {
