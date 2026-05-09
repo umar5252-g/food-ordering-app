@@ -1,54 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const { protect } = require("../middleware/authMiddleware");
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
+const { getProfile, updateProfile, changePassword } = require("../controllers/userController");
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
-// @access  Private
-router.get("/profile", protect, async (req, res) => {
-  res.status(200).json({ success: true, data: req.user });
-});
+// All routes are protected
+router.use(protect);
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
-// @access  Private
-router.put("/profile", protect, async (req, res) => {
-  try {
-    const { name, phone } = req.body;
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { name, phone },
-      { new: true, runValidators: true }
-    ).select("-password");
+router.route("/profile")
+  .get(getProfile)
+  .put(updateProfile);
 
-    res.status(200).json({ success: true, data: user });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
-
-// @desc    Change password
-// @route   PUT /api/users/change-password
-// @access  Private
-router.put("/change-password", protect, async (req, res) => {
-  try {
-    const { oldPassword, newPassword } = req.body;
-    const user = await User.findById(req.user._id).select("+password");
-
-    const isMatch = await user.comparePassword(oldPassword);
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Incorrect current password" });
-    }
-
-    user.password = newPassword;
-    await user.save();
-
-    res.status(200).json({ success: true, message: "Password updated successfully" });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
+router.put("/change-password", changePassword);
 
 module.exports = router;
