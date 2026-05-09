@@ -12,8 +12,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../api/axios";
-
-const placeholderImage = "https://via.placeholder.com/150?text=No+Image";
+import ImageWithFallback from "../components/ImageWithFallback";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -45,6 +44,12 @@ const Checkout = () => {
     cvv: "",
   });
 
+  useEffect(() => {
+    if (user?.name && !formData.fullName) {
+      setFormData((prev) => ({ ...prev, fullName: user.name }));
+    }
+  }, [user?.name, formData.fullName]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -63,8 +68,8 @@ const Checkout = () => {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
-    } else if (!/^\d{11}$/.test(formData.phone.replace(/[\s-]/g, ""))) {
-      newErrors.phone = "Phone must be 11 digits";
+    } else if (!/^\+?\d{10,15}$/.test(formData.phone.replace(/[\s-]/g, ""))) {
+      newErrors.phone = "Phone must be 10 to 15 digits";
     }
 
     if (formData.orderType === "Delivery") {
@@ -94,7 +99,13 @@ const Checkout = () => {
 
     try {
       const orderPayload = {
-        items: cart,
+        items: cart.map((item) => ({
+          product: item._id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+        })),
         orderType: formData.orderType,
         deliveryAddress:
           formData.orderType === "Delivery"
@@ -108,7 +119,6 @@ const Checkout = () => {
         },
       };
 
-      // Ensure your backend has this endpoint to accept the payload
       const res = await api.post("/orders", orderPayload);
       const orderId = res.data?.data?._id || res.data?._id || "success";
 
@@ -415,13 +425,9 @@ const Checkout = () => {
               {cart.map((item) => (
                 <div key={item._id} className="flex gap-4">
                   <div className="h-16 w-16 shrink-0 rounded-lg bg-white p-1 border border-gray-200">
-                    <img
-                      src={item.image || placeholderImage}
+                    <ImageWithFallback
+                      src={item.image}
                       alt={item.name}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = placeholderImage;
-                      }}
                       className="h-full w-full rounded object-cover"
                     />
                   </div>

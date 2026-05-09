@@ -3,8 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from "lucide-react";
 import api from "../api/axios";
-
-const placeholderImage = "https://via.placeholder.com/150?text=No+Image";
+import ImageWithFallback from "../components/ImageWithFallback";
 
 const Cart = () => {
   const { cart, total, updateQuantity, removeFromCart } = useCart();
@@ -110,13 +109,9 @@ const Cart = () => {
               >
                 {/* Image */}
                 <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-100">
-                  <img
-                    src={item.image || placeholderImage}
+                  <ImageWithFallback
+                    src={item.image}
                     alt={item.name}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = placeholderImage;
-                    }}
                     className="h-full w-full object-cover"
                   />
                 </div>

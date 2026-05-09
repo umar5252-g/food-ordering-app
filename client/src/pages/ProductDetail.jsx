@@ -5,9 +5,7 @@ import api from "../api/axios";
 import toast from "react-hot-toast";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
-
-const placeholderImage =
-  "https://via.placeholder.com/600x400?text=Delicious+Food";
+import ImageWithFallback from "../components/ImageWithFallback";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -133,13 +131,9 @@ const ProductDetail = () => {
       <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
         {/* Left Side: Image */}
         <div className="overflow-hidden rounded-2xl bg-white p-4 shadow-sm">
-          <img
-            src={product.image || placeholderImage}
+          <ImageWithFallback
+            src={product.image}
             alt={product.name}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = placeholderImage;
-            }}
             className="h-auto w-full object-cover rounded-xl"
           />
         </div>

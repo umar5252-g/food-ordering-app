@@ -1,9 +1,7 @@
 import { ShoppingCart, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-
-const placeholderImage =
-  "https://via.placeholder.com/600x400?text=Delicious+Food";
+import ImageWithFallback from "./ImageWithFallback";
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
@@ -17,15 +15,13 @@ const ProductCard = ({ product }) => {
   return (
     <Link to={`/product/${product._id}`} className="block group">
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md transition group-hover:shadow-xl">
-        <img
-          src={product.image || placeholderImage}
-          alt={product.name}
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = placeholderImage;
-          }}
-          className="h-48 w-full object-cover transition group-hover:scale-105"
-        />
+        <div className="h-48 w-full overflow-hidden bg-gray-100">
+          <ImageWithFallback
+            src={product.image}
+            alt={product.name}
+            className="h-full w-full object-cover transition group-hover:scale-105"
+          />
+        </div>
 
         <div className="p-4">
           <div className="mb-2 flex items-start justify-between gap-2">
