@@ -18,7 +18,7 @@ const products = [
     description: "Crispy chicken fillet with spicy mayo and crunchy lettuce.",
     price: 480,
     category: "burgers",
-    image: "https://images.unsplash.com/photo-1513185158878-8d8c182b013b?w=500&h=500&fit=crop",
+    image: "/zinger_burger.png",
     isAvailable: true,
   },
   {
@@ -34,7 +34,7 @@ const products = [
     description: "Creamy white sauce pasta with grilled chicken and parmesan.",
     price: 850,
     category: "pasta",
-    image: "https://images.unsplash.com/photo-1645112481338-35622bb0702e?w=500&h=500&fit=crop",
+    image: "/fettuccine_alfredo.png",
     isAvailable: true,
   },
   {
@@ -50,7 +50,7 @@ const products = [
     description: "Crispy golden fries seasoned with sea salt.",
     price: 250,
     category: "sides",
-    image: "https://images.unsplash.com/photo-1630384066202-18d038253a5d?w=500&h=500&fit=crop",
+    image: "/french_fries.png",
     isAvailable: true,
   },
   {
@@ -66,7 +66,7 @@ const products = [
     description: "Fresh and creamy mango blend.",
     price: 300,
     category: "drinks",
-    image: "https://images.unsplash.com/photo-1623065422902-30a2ad44924b?w=500&h=500&fit=crop",
+    image: "/mango_smoothie.png",
     isAvailable: true,
   },
   {
