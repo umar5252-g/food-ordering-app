@@ -11,7 +11,6 @@ const Cart = () => {
   const { cart, total, updateQuantity, removeFromCart, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const DELIVERY_FEE = 150;
   const finalTotal = total > 0 ? total + DELIVERY_FEE : 0;
@@ -23,52 +22,16 @@ const Cart = () => {
     }
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (!isAuthenticated) {
       toast.error("Please login to place your order");
-      navigate("/login", { state: { from: "/cart" } });
+      navigate("/login", { state: { from: "/checkout" } });
       return;
     }
 
     if (cart.length === 0) return;
 
-    setIsSubmitting(true);
-    try {
-      // Map cart items to match the backend schema exactly
-      const orderItems = cart.map((item) => ({
-        product: item._id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-        image: item.image,
-      }));
-
-      // Send the requested payload structure, including fallback fields to pass Mongoose validation
-      const payload = {
-        items: orderItems,
-        totalAmount: finalTotal,
-        totalPrice: finalTotal, 
-        orderType: "Delivery",
-        paymentMethod: "Cash on Delivery",
-        customerDetails: {
-          name: user.name,
-          phone: user.phone || "N/A",
-        },
-      };
-
-      // api uses the centralized instance which automatically attaches the Bearer token!
-      const response = await api.post("/orders", payload);
-
-      clearCart();
-      toast.success("Order placed successfully!");
-      // Redirect to the order confirmation page
-      navigate(`/order-confirmation/${response.data.data._id || 'success'}`);
-    } catch (err) {
-      const message = err.response?.data?.message || "Failed to place order";
-      toast.error(message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    navigate("/checkout");
   };
 
   if (cart.length === 0) {
@@ -212,16 +175,10 @@ const Cart = () => {
 
             <button
               onClick={handleCheckout}
-              disabled={cart.length === 0 || isSubmitting}
+              disabled={cart.length === 0}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-[#E4002B] py-5 text-xl font-bold text-white shadow-xl transition duration-300 hover:bg-red-700 hover:shadow-2xl hover:-translate-y-1 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:shadow-none disabled:-translate-y-0"
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-6 w-6 animate-spin" /> Processing...
-                </>
-              ) : (
-                "Proceed to Checkout"
-              )}
+              Proceed to Checkout
             </button>
           </div>
         </div>
