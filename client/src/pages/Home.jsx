@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../api/axios";
 import ProductCard from "../components/ProductCard";
+import HeroCarousel from "../components/HeroCarousel";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -39,31 +40,8 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative h-[80vh] min-h-[500px] overflow-hidden bg-gradient-to-r from-black/60 to-black/40">
-        <img
-          src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=800&fit=crop"
-          alt="Food Background"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/50" />
-
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
-          <h1 className="mb-6 text-5xl font-black tracking-tight text-white md:text-6xl lg:text-7xl">
-            Order Fresh Food, Delivered Fast
-          </h1>
-          <p className="mb-10 max-w-2xl text-lg text-gray-100 md:text-2xl font-medium">
-            Craving something delicious? Get your favorite meals from the best chefs in town, straight to your door.
-          </p>
-
-          <Link
-            to="/menu"
-            className="inline-flex items-center justify-center rounded-full bg-[#E4002B] px-10 py-5 text-xl font-bold text-white shadow-xl transition hover:bg-red-700 hover:scale-105"
-          >
-            Order Now
-          </Link>
-        </div>
-      </section>
+      {/* Hero Carousel */}
+      <HeroCarousel />
 
       {/* Categories Section */}
       <section className="bg-gray-50 px-4 py-16 sm:px-6 lg:px-8">
