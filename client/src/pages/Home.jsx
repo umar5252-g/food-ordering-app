@@ -36,6 +36,7 @@ const Home = () => {
     { name: "Sides", emoji: "🍟", id: "sides" },
     { name: "Drinks", emoji: "🥤", id: "drinks" },
     { name: "Desserts", emoji: "🍰", id: "desserts" },
+    { name: "Combos", emoji: "🍱", id: "combos" },
   ];
 
   return (

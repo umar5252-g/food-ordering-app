@@ -23,6 +23,7 @@ const Menu = () => {
     { id: "drinks", label: "Drinks" },
     { id: "desserts", label: "Desserts" },
     { id: "sides", label: "Sides" },
+    { id: "combos", label: "Combos" },
   ];
 
   const fetchProducts = async () => {

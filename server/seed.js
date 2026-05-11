@@ -85,6 +85,38 @@ const products = [
     image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500&h=500&fit=crop",
     isAvailable: true,
   },
+  {
+    name: "Family Feast Bundle",
+    description: "4 Burgers + 2 Large Fries + 4 Drinks + Dipping Sauces. Perfect for a family of four.",
+    price: 2499,
+    category: "combos",
+    image: "/deal_family_feast.png",
+    isAvailable: true,
+  },
+  {
+    name: "Burger Combo Deal",
+    description: "Your favorite premium burger served with crispy fries and a chilled drink.",
+    price: 899,
+    category: "combos",
+    image: "/deal_burger_combo.png",
+    isAvailable: true,
+  },
+  {
+    name: "Pizza Mania",
+    description: "2 Large Pizzas of your choice, served with Garlic Bread and 2 Large Drinks.",
+    price: 1999,
+    category: "combos",
+    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1400&h=700&fit=crop",
+    isAvailable: true,
+  },
+  {
+    name: "Chicken Bucket",
+    description: "12 pieces of our signature crispy fried chicken, 2 large fries, coleslaw, and 4 drinks.",
+    price: 2799,
+    category: "combos",
+    image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=1400&h=700&fit=crop",
+    isAvailable: true,
+  },
 ];
 
 const seedDB = async () => {
@@ -96,7 +128,7 @@ const seedDB = async () => {
     console.log("🗑️ Cleared existing products");
 
     await Product.insertMany(products);
-    console.log("🌱 Successfully seeded 10 products");
+    console.log(`🌱 Successfully seeded ${products.length} products`);
 
     process.exit();
   } catch (err) {
